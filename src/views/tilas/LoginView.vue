@@ -15,6 +15,10 @@
             <div style="height:20px"></div>
           </el-form-item>
 
+          <br>
+          <el-link type="primary" @click="toRegister">点这注册</el-link>
+          <br>
+          <br>
           <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
             <el-button @click="resetForm('ruleForm')">重置</el-button>
@@ -27,7 +31,7 @@
 
 <script>
 import axios from "axios";
-axios.defaults.baseURL = 'http://119.45.192.148:8080'
+axios.defaults.baseURL = 'http://119.45.145.96:8080'
 
 export default {
   data() {
@@ -74,8 +78,9 @@ export default {
             "password": this.ruleForm.password,
             "code": 1
           }).then(response => {
-            console.log(response.data)
-            if(response.data.data === "userNotFound") {
+            console.log(response.data.data)
+
+            if(response.data.data === "Error") {
               console.log("14546")
               alert("提交信息错误")
               this.$refs[formName].resetFields();
@@ -86,6 +91,9 @@ export default {
             } else {
               alert("valid success")
               console.log(response.data)
+              const jwtToken = response.data.data
+              localStorage.setItem('jwtToken', jwtToken);
+              this.$router.push( { path: '/' })
             }
           }, error=> {
             console.log('error123', error.message)
@@ -99,7 +107,10 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
-    }
+    },
+    toRegister() {
+      this.$router.push( {path:'/registration'} )
+    },
   }
 }
 </script>

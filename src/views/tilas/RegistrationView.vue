@@ -32,7 +32,9 @@
 
 <script>
 import axios from "axios";
-axios.defaults.baseURL = 'http://119.45.192.148:8080'
+axios.defaults.baseURL = 'http://119.45.145.96:8080'
+// backend pass jwtToken
+
 
 export default {
   data() {
@@ -73,7 +75,7 @@ export default {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         this.isValidEmail = regex.test(value)
         if (!this.isValidEmail) callback(new Error('请输入正确的邮箱'))
-        callback()
+        else callback()
       }
     }
     return {
@@ -113,7 +115,10 @@ export default {
             "email": this.ruleForm.email,
             "code": 1
           }).then(response => {
-            console.log(response.data)
+            const jwtToken = response.data.data
+            localStorage.setItem('jwtToken', jwtToken);
+            console.log(jwtToken)
+            this.$router.push( { path: '/' })
           }, error=> {
             console.log('error123', error.message)
           })

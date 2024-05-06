@@ -12,6 +12,8 @@ Vue.use(axios)
 
 Vue.prototype.$loggedIn = false;
 
+
+
 new Vue({
   router,
   render: h => h(App)

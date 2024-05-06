@@ -45,6 +45,12 @@ const routes = [
     name: 'userInfo',
 
     component: () => import('../views/tilas/UserInfoView.vue')
+  },
+  {
+    path: '/photo',
+    name: 'photo',
+
+    component: () => import('../views/tilas/PhotoView.vue')
   }
 ]
 

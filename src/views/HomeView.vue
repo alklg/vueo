@@ -12,7 +12,8 @@
           </el-dropdown-menu>
         </el-dropdown>
 
-        <router-link v-if="!loggedIn" to="/login">Login</router-link>
+
+        <router-link v-if="!jwtToen" to="/login">Login</router-link>
         <span v-else> {{ userInfo.username }} </span>
         <el-dropdown-menu slot = "dropdown">
           <el-dropdown-item command = "/userinfo">个人信息</el-dropdown-item>
@@ -23,40 +24,78 @@
 
       <br>
       <br>
-      <div style="border: 2px solid black">
+
 
 
         <el-upload
             class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            ref="upload"
+            action="http://119.45.145.96:8080/photoSolve"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
-            :before-remove="beforeRemove"
-            multiple
-            :limit="3"
-            :on-exceed="handleExceed"
-            :file-list="fileList">
-          <el-button size="small" type="primary">点击上传</el-button>
+            :file-list="fileList"
+            :auto-upload="false">
+
+          <el-button slot="trigger" size="small" type="primary" @click="handleUpload1">选取文件</el-button>
+          <el-button style="margin-left: 10px;" size="small" type="success" @click="handleUpload2">上传到服务器</el-button>
           <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
         </el-upload>
-      </div>
+
     </el-container>
   </div>
 </template>
 
 
 <script>
-// @ is an alias to /src
-//   import Vue from "vue"
-  export default {
-    inject: ['loggedIn'],
-    data() {
-      return {
-        fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
+export default {
+  inject: ['loggedIn'],
+  data() {
+    return {
+      fileList: [
 
-      };
-    },
+      ],
+      userInfo: {},
+      jwtToken: null
+    };
+  },
+  mounted() {
+      this.jwtToken = localStorage.getItem('jwtToken');
+      // 如果有 JWT，则从后端获取用户信息
+      if (this.jwtToken) {
+      this.getUserInfo(); // 获取用户信息
+    }
+  },
+
     methods: {
+      getUserInfo() {
+        // 从后端获取用户信息的逻辑，示例中假设从后端接口获取用户信息，并存储在 this.userInfo 中
+        // 示例：假设后端接口返回的用户信息包括 username 字段
+        this.userInfo.username = '用户A'; // 示例：假设用户名为'用户A'
+      },
+      handleUpload1() {
+        const jwtToken = localStorage.getItem('jwtToken');
+        console.log(jwtToken)
+        if (jwtToken === null || !jwtToken) {
+          // 如果没有 JWT，则跳转到登录页面
+          this.$router.push('/login');
+        } else {
+          // 如果有 JWT，则执行上传操作
+          this.$refs.upload.submit();
+
+        }
+      },
+      handleUpload2() {
+        const jwtToken = localStorage.getItem('jwtToken');
+        console.log(jwtToken)
+        if (jwtToken === null || !jwtToken) {
+          // 如果没有 JWT，则跳转到登录页面
+          this.$router.push('/login');
+        } else {
+          // 如果有 JWT，则执行上传操作
+          this.$refs.upload.submit();
+          this.$router.push({path: "/photo"})
+        }
+      },
       handleRemove(file, fileList) {
         console.log(file, fileList);
       },
@@ -66,19 +105,14 @@
       handleExceed(files, fileList) {
         this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
       },
-      // beforeRemove(file, fileList) {
-      //   return this.$confirm(`确定移除 ${ file.name }？`);
-      // }
       handleCommand(command) {
-        this.$router.push(command)
+        this.$router.push(command);
       },
-
       logout() {
-
+        // 执行退出登录的逻辑
       }
-
     }
-}
+  }
 </script>
 
 
